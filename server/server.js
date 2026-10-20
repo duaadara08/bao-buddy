@@ -68,7 +68,16 @@ app.post("/upload", (req, res) => {
     res.json({ message: `Saved ${safeName}`, filename: safeName });   // tell the website it worked
   });
 });
-
+// NEW: when a GET arrives at /notes, send back the list of .txt files in the notes folder
+app.get("/notes", (req, res) => {
+  try {
+    fs.mkdirSync("notes", { recursive: true });   // make the folder if it's missing
+    const files = fs.readdirSync("notes").filter((f) => f.endsWith(".txt"));   // keep only .txt files
+    res.json({ files });   // send the list back
+  } catch (err) {
+    res.status(500).json({ error: "Could not read the notes folder." });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
-});
+}); 
